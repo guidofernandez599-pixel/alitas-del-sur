@@ -1,0 +1,100 @@
+{
+  "_nota": "Datos oficiales del restaurante Alitas del Sur para el Día 12 (Ajax, fetch y JSON). Servido como respaldo para peticiones asíncronas locales y remotas.",
+  "negocio": {
+    "nombre": "Alitas del Sur",
+    "propietaria": "Silviana Pacheco",
+    "direccion": "Calle 11 de Achumani, Av. García",
+    "ciudad": "La Paz",
+    "pais": "Bolivia",
+    "telefono": "789 632 58",
+    "coordenadas": { "lat": -16.5383, "lng": -68.0736 },
+    "horario": { "apertura": "11:00", "cierre": "17:00", "dias": "Lunes a Lunes" }
+  },
+  "categorias": ["nacionales", "alitas", "pescados", "extras", "combos"],
+  "productos": [
+    {
+      "id": 1,
+      "nombre": "Sajta de Pollo",
+      "categoria": "nacionales",
+      "precio": 20.00,
+      "unidad": "plato",
+      "stock": 20,
+      "disponible": true,
+      "imagen": "sajta.jpg",
+      "descripcion": "Pollo jugoso con salsa de ají amarillo, chuño rebosado y papa.",
+      "proveedor": "Granja Avícola Sur"
+    },
+    {
+      "id": 2,
+      "nombre": "Silpancho",
+      "categoria": "nacionales",
+      "precio": 22.00,
+      "unidad": "plato",
+      "stock": 15,
+      "disponible": true,
+      "imagen": "silpancho.jpg",
+      "descripcion": "Carne apanada crujiente sobre arroz, papas doradas y huevo frito.",
+      "proveedor": "Carnicería Central"
+    },
+    {
+      "id": 3,
+      "nombre": "Plato Paceño",
+      "categoria": "nacionales",
+      "precio": 25.00,
+      "unidad": "plato",
+      "stock": 10,
+      "disponible": true,
+      "imagen": "platopaceno.jpg",
+      "descripcion": "Choclo tierno con queso frito, habas, papa y carne asada.",
+      "proveedor": "Productores del Altiplano"
+    },
+    {
+      "id": 4,
+      "nombre": "Trucha Frita",
+      "categoria": "pescados",
+      "precio": 30.00,
+      "unidad": "plato",
+      "stock": 8,
+      "disponible": true,
+      "imagen": "trucha.jpg",
+      "descripcion": "Trucha fresca del lago dorada, servida con mote, chuño y papa.",
+      "proveedor": "Criadero Lago Titicaca"
+    },
+    {
+      "id": 5,
+      "nombre": "Chicharron",
+      "categoria": "extras",
+      "precio": 35.00,
+      "unidad": "plato",
+      "stock": 0,
+      "disponible": false,
+      "imagen": "chicharron.jpg",
+      "descripcion": "Costillas de cerdo crujientes en perol con mote y chuño.",
+      "proveedor": "Granja Porcina Andina"
+    },
+    {
+      "id": 6,
+      "nombre": "Porción de Alitas",
+      "categoria": "alitas",
+      "precio": 20.00,
+      "unidad": "porción",
+      "stock": 30,
+      "disponible": true,
+      "imagen": "alitas.jpg",
+      "descripcion": "Alitas crocantes y doradas acompañadas de papas fritas y salsas caseras.",
+      "proveedor": "Granja Avícola Sur"
+    },
+    {
+      "id": 7,
+      "nombre": "Combo Familiar",
+      "categoria": "combos",
+      "precio": 85.00,
+      "unidad": "combo",
+      "stock": 5,
+      "disponible": true,
+      "imagen": "platos.jpg",
+      "descripcion": "Bandeja surtida para toda la familia con bebida de cortesía.",
+      "proveedor": "Alitas del Sur Cocina Central"
+    }
+  ]
+}

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Variedad de platos nacionales y alitas de pollo.">
+        <title>Alitas del Sur</title>
+        <link rel="stylesheet" href="estilos.css">
+    </head>
+    <body>
+        <header>
+            <div class="header-contenido">
+                <img src="Logo%20Alitas.jpeg" alt="Logo Alitas del Sur">
+                <div>
+                    <h1>Alitas del Sur</h1>
+                    <p>¡El mejor sabor de la ciudad!</p>
+                </div>
+            </div>
+            <div class="controles-header">
+                <button type="button" id="header-tema-toggle" class="btn-tema" aria-pressed="false">🌙 Modo oscuro</button>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#Menu">Platos</a></li>
+                    <li><a href="#Promociones">Promociones</a></li>
+                    <li><a href="#Horarios">Horarios</a></li>
+                    <li><a href="#Panel-jQuery">Panel jQuery</a></li>
+                    <li><a href="#Remoto">Catálogo Remoto</a></li>
+                    <li><a href="#Pedidos">Haz tu Pedido</a></li>
+                    <li><a href="#Contactos">Contacto</a></li>
+                </ul>
+            </nav>
+        </header>
+            
+        <main>
+            <section id="Menu">
+                <h2>Elige tu plato</h2>
+
+                <!-- BARRA DE BÚSQUEDA Y FILTROS -->
+                <div class="controles">
+                    <label for="buscador" class="visualmente-oculto">Buscar plato por nombre o categoría</label>
+                    <input type="search" id="buscador" placeholder="🔍 Buscar plato (ej. Sajta, Alitas)...">
+                    
+                    <div id="filtros">
+                        <button type="button" data-categoria="todos" class="activo">Todos</button>
+                        <button type="button" data-categoria="nacionales">Nacionales</button>
+                        <button type="button" data-categoria="alitas">Alitas</button>
+                        <button type="button" data-categoria="pescados">Pescados</button>
+                        <button type="button" data-categoria="extras">Extras</button>
+                        <button type="button" data-categoria="combos">Combos</button>
+                    </div>
+                </div>
+                <p id="resultado" aria-live="polite" style="text-align: center; margin: -0.5rem 0 1.5rem; font-weight: 500;"></p>
+
+                <!-- Contenedor dinámico -->
+                <div id="lista-productos"></div>
+            </section>
+
+            <section id="Promociones">
+                <h2>¡Promociones que más te convienen!</h2>
+                <div class="cuadricula-promos">
+                    <article class="tarjeta-promo">
+                        <h3>Combos Familiares</h3>
+                        <p>Para familias de 5 personas, se ganan una bebida familiar de cortesía.</p>
+                    </article>
+
+                    <article class="tarjeta-promo">
+                        <h3>Combo Parejas</h3>
+                        <p>Por la compra de 2 platos de la casa, te llevas una bebida personal gratis.</p>
+                    </article>
+                </div>
+            </section>
+
+            <!-- NUEVA SECCIÓN: PANEL INTERACTIVO CON jQUERY -->
+            <section id="Panel-jQuery">
+                <h2>Panel Interactivo y Avisos (jQuery)</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <button type="button" id="menu-toggle" class="btn-tema" aria-expanded="false" style="margin-bottom: 1rem;">📱 Desplegar Menú Móvil (jQuery)</button>
+                    <div id="menu-movil" style="display: none; background: var(--color-fondo); padding: 1rem; border-radius: 6px; border: 1px solid var(--color-borde);">
+                        <p><strong>Opciones rápidas:</strong> Pedidos por WhatsApp, Ubicación GPS, Promociones del día.</p>
+                    </div>
+                </div>
+
+                <div id="acordeon" style="margin-bottom: 1.5rem;">
+                    <div class="item-acordeon" style="border: 1px solid var(--color-borde); border-radius: 6px; margin-bottom: 0.5rem; overflow: hidden;">
+                        <div class="titulo" aria-expanded="false" style="background: var(--color-fondo); padding: 0.8rem 1rem; cursor: pointer; font-weight: bold;">▶ ¿Cómo realizamos las entregas a domicilio?</div>
+                        <div class="cuerpo" style="display: none; padding: 1rem; background: var(--color-fondo-tarjeta);">Contamos con delivery propio en toda la zona sur con empaques térmicos especiales para que tus alitas lleguen crujientes y calientes.</div>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="button" id="mostrar-avisos" class="btn-tema">Mostrar avisos escalonados</button>
+                    <ul id="avisos" style="list-style: none; margin-top: 1rem;">
+                        <li style="display: none; padding: 0.5rem 0; color: var(--color-principal);">🔥 ¡Nueva salsa maracuyá picante disponible hoy!</li>
+                        <li style="display: none; padding: 0.5rem 0; color: var(--color-principal);">🍗 2x1 en porciones de alitas todos los miércoles.</li>
+                        <li style="display: none; padding: 0.5rem 0; color: var(--color-principal);">⭐ ¡Gracias por calificarnos con 5 estrellas!</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- NUEVA SECCIÓN: CARGA REMOTA CON FETCH Y JQUERY -->
+            <section id="Remoto">
+                <h2>Catálogo Remoto y Peticiones (Fetch & jQuery)</h2>
+                <p style="margin-bottom: 1rem;">Prueba cargando datos de manera asíncrona desde el servidor:</p>
+                
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                    <button type="button" id="cargar-fetch" class="btn-tema">Cargar con Fetch</button>
+                    <button type="button" id="cargar-jquery" class="btn-tema">Cargar con jQuery (getJSON)</button>
+                    <button type="button" id="cargar-roto" style="padding: 0.5rem 1rem; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer;">Probar un error (404)</button>
+                </div>
+
+                <div id="estado" style="padding: 0.8rem; border-radius: 6px; margin-bottom: 1rem; font-weight: 500; background: var(--color-fondo);">Estado: Esperando acción...</div>
+
+                <div id="lista-remota" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem;"></div>
+            </section>
+
+            <section id="Horarios">
+                <h2>Alitas del Sur está listo para atenderte en los siguientes horarios:</h2>
+                <article class="horario-card">
+                    <h3>De Lunes a Lunes</h3>
+                    <p>Desde las 11:00 am hasta las 17:00 pm</p>
+                </article>
+
+                <div class="tabla-contenedor">
+                    <table>
+                        <caption>Precios por categoría y disponibilidad</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Categoría</th>
+                                <th scope="col">Precio Promedio</th>
+                                <th scope="col">Disponibilidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Almuerzos</td> <td>Bs. 22.00</td> <td>Todos los días</td></tr>
+                            <tr><td>Platos extra</td> <td>Bs. 30.00</td> <td>Todos los días</td></tr>
+                            <tr><td>Alitas de pollo</td> <td>Bs. 20.00</td> <td>Todos los días</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <figure>
+                    <img src="alitas.jpg" alt="Variedad de platos a tu elección" width="600" height="400">
+                    <figcaption>Variedad de platos nacionales y nuestras famosas alitas</figcaption>
+                </figure>
+            </section>
+
+            <section id="Preferencias-Seccion" style="padding: 2rem; background: var(--color-fondo-tarjeta); border-radius: 8px; margin: 2rem auto; max-width: 800px; box-shadow: var(--sombra);">
+                <h2>Preferencias y Ubicación</h2>
+                <p id="estado-prefs" style="margin-bottom: 1rem;">Cargando preferencias...</p>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                    <label for="orden">Ordenar menú por:</label>
+                    <select id="orden" style="padding: 0.5rem; border-radius: 4px; border: 1px solid var(--color-borde);">
+                        <option value="nombre">Nombre</option>
+                        <option value="precio">Precio</option>
+                    </select>
+                    <button type="button" id="tema-toggle" class="btn-tema">🌙 Cambiar tema</button>
+                    <button type="button" id="olvidar" style="padding: 0.5rem 1rem; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer;">Restablecer</button>
+                </div>
+                <div style="margin-top: 1.5rem;">
+                    <button type="button" id="ubicarme" style="padding: 0.6rem 1.2rem; background: var(--color-principal); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">📍 Calcular distancia a mi ubicación</button>
+                    <p id="estado-ubicacion" style="margin-top: 0.5rem; font-weight: 500;"></p>
+                </div>
+            </section>
+
+            <section id="Pedidos">
+                <h2>Hacer un pedido</h2>
+
+                <form action="/Pedidos" method="post">
+                    <fieldset>
+                        <legend>Tus datos</legend>
+                        <p>
+                            <label for="nombre">Nombre completo</label>
+                            <input type="text" id="nombre" name="nombre" autocomplete="name" required>
+                        </p>
+
+                        <p>
+                            <label for="email">Correo electrónico</label>
+                            <input type="email" id="email" name="email" autocomplete="email" required>
+                        </p>
+
+                        <p>
+                            <label for="telefono">Teléfono</label>
+                            <input type="tel" id="telefono" name="telefono" autocomplete="tel" pattern="[0-9]{7,8}" title="7 u 8 dígitos, sin espacios" required>
+                        </p>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Tu pedido</legend>
+                        <p>
+                            <label for="Productos">Plato principal</label>
+                            <select id="Productos" name="Productos" required>
+                                <option value="">Elige una opción</option>
+                                <option value="Sajta de Pollo" data-precio="20">Sajta de Pollo - Bs 20.00</option>
+                                <option value="Silpancho" data-precio="22">Silpancho - Bs 22.00</option>
+                                <option value="Plato Paceño" data-precio="25">Plato Paceño - Bs 25.00</option>
+                                <option value="Trucha Frita" data-precio="30">Trucha Frita - Bs 30.00</option>
+                                <option value="Porción de Alitas" data-precio="20">Porción de Alitas - Bs 20.00</option>
+                                <option value="Combo Familiar" data-precio="85">Combo Familiar - Bs 85.00</option>
+                            </select>
+                        </p>
+
+                        <p>
+                            <label for="cantidad">Cantidad</label>
+                            <input type="number" id="cantidad" name="cantidad" min="1" max="100" value="1" required>
+                        </p>
+
+                        <p id="total-contenedor" style="font-size: 1.1rem; font-weight: bold; color: var(--color-principal); margin: 0.5rem 0 1rem;">
+                            Total a pagar: <span id="total-monto">Bs 0.00</span>
+                        </p>
+
+                        <p>
+                            <label for="fecha">Fecha de pedido</label>
+                            <input type="date" id="fecha" name="fecha" required>
+                        </p>
+
+                        <p>
+                            <label for="notas">Indicaciones especiales (salsas, guarniciones, etc.)</label>
+                            <textarea id="notas" name="notas" rows="3"></textarea>
+                        </p>
+
+                        <p class="campo-checkbox">
+                            <input type="checkbox" id="terminos" name="terminos" required>
+                            <label for="terminos">Acepto que el pedido se confirmará por llamada telefónica</label>
+                        </p>
+                    </fieldset>
+                    <button type="submit" class="btn-enviar">Enviar pedido</button>
+                </form>
+            </section>
+        </main>
+
+        <aside>
+            <h2>¿Conoces el refrán?</h2>
+            <p><i>"Barriga llena, corazón contento."</i></p>
+        </aside>
+
+        <footer id="Contactos">
+            <h2>Contáctanos</h2>
+            <address>
+                Calle 11 de Achumani, Av. García<br>
+                Teléfono: 789 632 58
+            </address>
+            <p><small>&copy; 2026 Alitas del Sur</small></p>
+        </footer>
+
+        <!-- ENLACES A LOS ARCHIVOS JAVASCRIPT EN ORDEN CORRECTO DE DEPENDENCIA -->
+        <script src="jquery-3.7.1.min.js"></script>
+        <script src="jquery-panel.js"></script>
+        <script src="remoto.js"></script>
+        <script src="datos.js"></script>
+        <script src="funciones.js"></script>
+        <script src="render.js"></script>
+        <script src="eventos.js"></script>
+        <script src="app.js"></script>
+        <script src="preferencias.js"></script>
+    </body>
+</html>
