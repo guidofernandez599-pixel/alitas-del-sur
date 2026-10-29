@@ -30,10 +30,7 @@ function pintarRemoto(productos) {
       art.classList.add("agotado");
     }
 
-    let imagenUrl = p.imagen || "alitas.jpg";
-    if (!imagenUrl.startsWith("imagenes/") && !imagenUrl.startsWith("http")) {
-      imagenUrl = `imagenes/${imagenUrl}`;
-    }
+    const imagenUrl = p.imagen || "alitas.jpg";
     const categoriaHtml = p.categoria ? `<p class="categoria"><strong>Categoría:</strong> ${p.categoria}</p>` : "";
     const proveedorHtml = p.proveedor ? `<p class="stock" style="font-size:0.8rem; color:var(--color-suave)">🏢 Proveedor local: ${p.proveedor}</p>` : "";
 

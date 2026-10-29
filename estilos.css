@@ -2,11 +2,17 @@
 :root {
   --color-principal: #d35400; /* Naranja Alitas / Cálido */
   --color-secundario: #e67e22;
+  --color-acento: #d35400;
   --color-fondo: #fcfcfc;
   --color-fondo-tarjeta: #ffffff;
+  --color-superficie: #f8f4f0;
   --color-texto: #2c3e50;
   --color-suave: #7f8c8d;
   --color-borde: #dcdde1;
+  --borde: #dcdde1;
+  --radio: 10px;
+  --espacio: 1rem;
+  --espacio-lg: 2rem;
   --sombra: 0 4px 6px rgba(0, 0, 0, 0.08);
   --transicion: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
@@ -14,11 +20,14 @@
 body.tema-oscuro {
   --color-principal: #e67e22;
   --color-secundario: #d35400;
+  --color-acento: #f39c12;
   --color-fondo: #121212;
   --color-fondo-tarjeta: #1e1e1e;
+  --color-superficie: #262626;
   --color-texto: #f5f6fa;
   --color-suave: #b2bec3;
   --color-borde: #2f3542;
+  --borde: #3a4152;
   --sombra: 0 4px 6px rgba(0, 0, 0, 0.4);
 }
 
@@ -304,7 +313,319 @@ figcaption {
   font-style: italic;
 }
 
-/* ── 5. FORMULARIO DE PEDIDOS ─────────────────────────────────────────── */
+/* ── 5. BANDEJA INTERACTIVA DE PEDIDOS (DRAG & DROP + CANVAS) ─────────── */
+.bandeja-seccion {
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 1.5rem;
+  margin-bottom: 1.8rem;
+}
+
+.bandeja-encabezado {
+  margin-bottom: 1.2rem;
+}
+
+.bandeja-encabezado h3 {
+  color: var(--color-principal);
+  font-size: 1.25rem;
+  margin-bottom: 0.3rem;
+}
+
+.bandeja-encabezado p {
+  color: var(--color-suave);
+  font-size: 0.95rem;
+}
+
+.bandeja-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 820px) {
+  .bandeja-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.platos-laterales {
+  background: var(--color-fondo-tarjeta);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 1rem;
+  box-shadow: var(--sombra);
+}
+
+.platos-laterales h4 {
+  margin-bottom: 0.8rem;
+  color: var(--color-texto);
+  font-size: 1.05rem;
+}
+
+.lista-platos-mini {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.plato-arrastrable {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-left: 4px solid var(--color-principal);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  cursor: grab;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  user-select: none;
+}
+
+.plato-arrastrable:hover {
+  transform: translateX(3px);
+  box-shadow: var(--sombra);
+  border-color: var(--color-principal);
+}
+
+.plato-arrastrable:active {
+  cursor: grabbing;
+}
+
+.plato-arrastrable.arrastrando {
+  opacity: 0.45;
+}
+
+.plato-arrastrable-info {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  pointer-events: none;
+}
+
+.plato-arrastrable-info img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--color-borde);
+  flex-shrink: 0;
+}
+
+.plato-arrastrable-texto {
+  display: flex;
+  flex-direction: column;
+}
+
+.plato-arrastrable-nombre {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-texto);
+}
+
+.plato-arrastrable-precio {
+  font-size: 0.85rem;
+  color: var(--color-principal);
+  font-weight: 700;
+}
+
+.btn-agregar-mini {
+  background: var(--color-principal);
+  color: #fff;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.btn-agregar-mini:hover {
+  background: var(--color-secundario);
+  transform: scale(1.08);
+}
+
+/* Cuadro de Bandeja (Destino de Drop + Canvas) */
+.cuadro-bandeja {
+  background: var(--color-fondo-tarjeta);
+  border: 2px dashed var(--color-borde);
+  border-radius: var(--radio);
+  padding: 1rem 1.2rem;
+  box-shadow: var(--sombra);
+  transition: border-color 0.2s, background-color 0.2s, transform 0.15s;
+}
+
+.cuadro-bandeja.encima {
+  border-color: var(--color-principal);
+  border-style: solid;
+  background: var(--color-fondo);
+  transform: scale(1.01);
+}
+
+.cuadro-bandeja-barra {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+}
+
+.cuadro-bandeja-barra h4 {
+  font-size: 1.1rem;
+  color: var(--color-texto);
+}
+
+.btn-vaciar-bandeja {
+  background: transparent;
+  color: #e74c3c;
+  border: 1px solid #e74c3c;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-vaciar-bandeja:hover {
+  background: #e74c3c;
+  color: #fff;
+}
+
+#canvas-bandeja,
+#grafico-bandeja {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  background: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+  margin-bottom: 0.4rem;
+  cursor: pointer;
+}
+
+.bandeja-ayuda-canvas {
+  font-size: 0.8rem;
+  color: var(--color-suave);
+  text-align: center;
+  margin-bottom: 0.8rem;
+}
+
+.lista-bandeja-items {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.item-bandeja {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+  padding: 0.45rem 0.7rem;
+}
+
+.item-bandeja-info {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.item-bandeja-info img {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.item-bandeja-controles {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn-cant-bandeja {
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  border: 1px solid var(--color-borde);
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-cant-bandeja:hover {
+  background: var(--color-principal);
+  color: #fff;
+  border-color: var(--color-principal);
+}
+
+.btn-quitar-bandeja {
+  background: transparent;
+  border: none;
+  color: #e74c3c;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 0.25rem;
+}
+
+.resumen-bandeja {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.8rem;
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+  margin-bottom: 0.8rem;
+  font-size: 0.95rem;
+}
+
+.resumen-bandeja strong {
+  color: var(--color-principal);
+  font-size: 1.05rem;
+}
+
+.fila-selector-plato {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.fila-selector-plato select {
+  flex: 1;
+  min-width: 220px;
+}
+
+.resumen-pedido-texto {
+  background: var(--color-superficie);
+  border-left: 4px solid var(--color-principal);
+  padding: 0.6rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.92rem;
+  color: var(--color-texto);
+}
+
+/* ── 6. FORMULARIO DE PEDIDOS ─────────────────────────────────────────── */
 form fieldset {
   border: 1px solid var(--color-borde);
   padding: 1.5rem;
@@ -377,7 +698,7 @@ textarea {
   background: var(--color-secundario);
 }
 
-/* ── 6. ASIDE Y FOOTER ────────────────────────────────────────────────── */
+/* ── 7. ASIDE Y FOOTER ────────────────────────────────────────────────── */
 aside {
   background: var(--color-fondo-tarjeta);
   padding: 1.5rem;
@@ -414,4 +735,142 @@ footer address {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+/* ── 8. TABLERO DE PLANIFICACIÓN DEL DÍA + GRÁFICO CANVAS ─────────────── */
+#tablero-zona {
+  margin-top: var(--espacio-lg);
+}
+
+#tablero-zona > p {
+  margin-bottom: 1.2rem;
+  color: var(--color-suave);
+}
+
+#tablero {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--espacio);
+  margin-bottom: 1.5rem;
+}
+
+.columna {
+  background: var(--color-superficie);
+  border: 2px dashed var(--borde);
+  border-radius: var(--radio);
+  padding: var(--espacio);
+  min-height: 12rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.columna h3 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  color: var(--color-texto);
+  font-size: 1.1rem;
+}
+
+/* La clase que pone y quita tablero.js mientras se arrastra por encima. */
+.columna.encima {
+  border-color: var(--color-acento);
+  border-style: solid;
+  background: var(--color-fondo);
+}
+
+.lista-columna {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--espacio);
+  min-height: 5rem;
+  flex: 1;
+}
+
+.ficha {
+  background: var(--color-fondo-tarjeta);
+  border: 1px solid var(--borde);
+  border-left: 4px solid var(--color-principal);
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  box-shadow: var(--sombra);
+  cursor: grab;
+  transition: transform 0.15s, opacity 0.15s;
+}
+
+.ficha:hover {
+  transform: translateY(-2px);
+}
+
+.ficha:active {
+  cursor: grabbing;
+}
+
+/* Mientras se arrastra, el original se atenúa */
+.ficha.arrastrando {
+  opacity: 0.4;
+}
+
+.ficha-contenido {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  pointer-events: none;
+}
+
+.ficha-contenido img {
+  width: 36px;
+  height: 36px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--color-borde);
+  flex-shrink: 0;
+}
+
+.ficha-texto {
+  font-weight: 500;
+  font-size: 0.92rem;
+}
+
+.btn-mover-ficha {
+  background: var(--color-superficie);
+  color: var(--color-texto);
+  border: 1px solid var(--color-borde);
+  border-radius: 6px;
+  padding: 0.2rem 0.45rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-mover-ficha:hover {
+  background: var(--color-principal);
+  color: #fff;
+  border-color: var(--color-principal);
+}
+
+.columna .total {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-suave);
+  border-top: 1px solid var(--color-borde);
+  padding-top: 0.5rem;
+}
+
+#grafico {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+  background: var(--color-superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
 }

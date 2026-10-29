@@ -6,6 +6,8 @@ const contenedorProductos = document.querySelector("#lista-productos");
 const selectProductos = document.querySelector("#Productos");
 const inputCantidad = document.querySelector("#cantidad");
 const displayTotal = document.querySelector("#total-monto");
+const resumenPedidoTexto = document.querySelector("#resumen-pedido-texto");
+const btnAgregarSelectBandeja = document.querySelector("#btn-agregar-select-bandeja");
 const inputFecha = document.querySelector("#fecha");
 const resultadoTexto = document.querySelector("#resultado");
 
@@ -48,6 +50,14 @@ function actualizar() {
       const descNorm = normalizar(p.descripcion);
       return nombreNorm.includes(terminoNorm) || catNorm.includes(terminoNorm) || descNorm.includes(terminoNorm);
     });
+
+  // Ordenar según preferencia activa si existe el selector #orden
+  const selectOrden = document.querySelector("#orden");
+  const criterioOrden = selectOrden ? selectOrden.value : "nombre";
+  visibles.sort((a, b) => {
+    if (criterioOrden === "precio") return a.precio - b.precio;
+    return a.nombre.localeCompare(b.nombre, "es");
+  });
 
   // Llama a la función renderMenu que definimos en render.js
   if (typeof renderMenu === "function") {
@@ -96,6 +106,15 @@ if (contenedorProductos) {
     if (!boton || boton.disabled) return;
 
     const nombrePlato = boton.dataset.plato;
+    const platoObj = typeof productos !== "undefined"
+      ? productos.find(p => p.nombre === nombrePlato)
+      : null;
+
+    // Si existe la bandeja interactiva, agrega el plato a la bandeja
+    if (typeof window.agregarPlatoABandeja === "function" && platoObj) {
+      window.agregarPlatoABandeja(platoObj, 1);
+    }
+
     if (selectProductos) {
       const opciones = Array.from(selectProductos.options);
       const coincidencia = opciones.find(opt => opt.value === nombrePlato);
@@ -112,14 +131,41 @@ if (contenedorProductos) {
   });
 }
 
-// ── 7. CÁLCULO EN VIVO DEL TOTAL DEL PEDIDO ─────────────────────────────
+// ── 7. CÁLCULO EN VIVO DEL TOTAL DEL PEDIDO (BANDEJA + SELECTOR) ────────
 function actualizarTotalPedido() {
-  if (!selectProductos || !displayTotal) return;
-  const opcion = selectProductos.selectedOptions[0];
+  if (!displayTotal) return;
+
+  const itemsBandeja = Array.isArray(window.bandejaPedido) ? window.bandejaPedido : [];
+  const totalBandeja = itemsBandeja.reduce((acc, i) => acc + i.precio * i.cantidad, 0);
+
+  if (itemsBandeja.length > 0) {
+    // Si hay platos en la bandeja, el selector individual no es obligatorio
+    if (selectProductos) selectProductos.required = false;
+    displayTotal.textContent = `Bs ${totalBandeja.toFixed(2)}`;
+
+    if (resumenPedidoTexto) {
+      const detalle = itemsBandeja.map(i => `${i.cantidad}x ${i.nombre}`).join(", ");
+      resumenPedidoTexto.textContent = `🧾 Platos en tu bandeja: ${detalle}`;
+    }
+    return;
+  }
+
+  // Si la bandeja está vacía, usar el selector clásico
+  if (selectProductos) selectProductos.required = true;
+  const opcion = selectProductos ? selectProductos.selectedOptions[0] : null;
   const precio = opcion ? parseFloat(opcion.dataset.precio) || 0 : 0;
   const cantidad = inputCantidad ? parseInt(inputCantidad.value, 10) || 1 : 1;
   const total = typeof calcularTotal === "function" ? calcularTotal(precio, cantidad) : precio * cantidad;
+
   displayTotal.textContent = `Bs ${total.toFixed(2)}`;
+
+  if (resumenPedidoTexto) {
+    if (opcion && opcion.value) {
+      resumenPedidoTexto.textContent = `🧾 Selección rápida: ${cantidad}x ${opcion.value} (puedes arrastrar más platos a la bandeja arriba).`;
+    } else {
+      resumenPedidoTexto.textContent = "Ningún plato seleccionado todavía. Arrastra platos a la bandeja o elige uno arriba.";
+    }
+  }
 }
 
 if (selectProductos) {
@@ -127,6 +173,31 @@ if (selectProductos) {
 }
 if (inputCantidad) {
   inputCantidad.addEventListener("input", actualizarTotalPedido);
+}
+
+// Botón para pasar lo elegido en el <select> directamente a la bandeja
+if (btnAgregarSelectBandeja) {
+  btnAgregarSelectBandeja.addEventListener("click", () => {
+    if (!selectProductos || !selectProductos.value) {
+      selectProductos?.focus();
+      return;
+    }
+    const nombre = selectProductos.value;
+    const opcion = selectProductos.selectedOptions[0];
+    const precio = opcion ? parseFloat(opcion.dataset.precio) || 20 : 20;
+    const cantidad = inputCantidad ? parseInt(inputCantidad.value, 10) || 1 : 1;
+    const platoCatalogo = typeof productos !== "undefined"
+      ? productos.find(p => p.nombre === nombre)
+      : null;
+
+    if (typeof window.agregarPlatoABandeja === "function") {
+      window.agregarPlatoABandeja({
+        nombre,
+        precio,
+        imagen: platoCatalogo ? platoCatalogo.imagen : "platos.jpg",
+      }, cantidad);
+    }
+  });
 }
 
 // ── 8. EXPRESIONES REGULARES PARA VALIDACIÓN (TELÉFONO BOLIVIANO Y CORREO) ─
@@ -139,6 +210,8 @@ const PATRONES = {
 if (formulario) {
   formulario.addEventListener("submit", (event) => {
     event.preventDefault();
+
+    actualizarTotalPedido();
 
     if (!formulario.reportValidity()) {
       return;
@@ -170,13 +243,40 @@ if (formulario) {
       return;
     }
 
-    // Capturar datos del formulario
+    // Capturar datos del formulario y de la bandeja
     const datos = Object.fromEntries(new FormData(formulario));
+    const itemsBandeja = Array.isArray(window.bandejaPedido) ? window.bandejaPedido : [];
+
+    let resumenPlatos = "";
+    let montoTotal = 0;
+
+    if (itemsBandeja.length > 0) {
+      resumenPlatos = itemsBandeja
+        .map(i => `• ${i.cantidad} x ${i.nombre} (Bs ${(i.precio * i.cantidad).toFixed(2)})`)
+        .join("\n");
+      montoTotal = itemsBandeja.reduce((acc, i) => acc + i.precio * i.cantidad, 0);
+      datos.platosBandeja = itemsBandeja;
+      datos.totalBs = montoTotal;
+    } else {
+      const opcion = selectProductos ? selectProductos.selectedOptions[0] : null;
+      const precio = opcion ? parseFloat(opcion.dataset.precio) || 0 : 0;
+      const cant = parseInt(datos.cantidad, 10) || 1;
+      montoTotal = precio * cant;
+      resumenPlatos = `• ${cant} x ${datos.Productos} (Bs ${montoTotal.toFixed(2)})`;
+      datos.totalBs = montoTotal;
+    }
+
     console.log("Pedido recibido en Alitas del Sur:", datos);
 
     // Confirmación al cliente
-    alert(`¡Gracias por tu pedido, ${datos.nombre}!\nHas solicitado: ${datos.cantidad} x ${datos.Productos}.\nNos pondremos en contacto al ${datos.telefono} para confirmar.`);
+    alert(
+      `¡Gracias por tu pedido, ${datos.nombre}!\n\nDetalle de tu bandeja:\n${resumenPlatos}\n\nTotal a pagar: Bs ${montoTotal.toFixed(2)}\nNos pondremos en contacto al ${datos.telefono} para confirmar.`
+    );
+
     formulario.reset();
+    if (typeof window.vaciarBandeja === "function") {
+      window.vaciarBandeja();
+    }
     if (inputFecha) inputFecha.value = hoy;
     actualizarTotalPedido();
   });

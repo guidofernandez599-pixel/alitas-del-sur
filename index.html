@@ -27,6 +27,7 @@
                     <li><a href="#Panel-jQuery">Panel jQuery</a></li>
                     <li><a href="#Remoto">Catálogo Remoto</a></li>
                     <li><a href="#Pedidos">Haz tu Pedido</a></li>
+                    <li><a href="#tablero-zona">Tablero</a></li>
                     <li><a href="#Contactos">Contacto</a></li>
                 </ul>
             </nav>
@@ -167,6 +168,49 @@
             <section id="Pedidos">
                 <h2>Hacer un pedido</h2>
 
+                <!-- BANDEJA INTERACTIVA: ARRASTRAR PLATOS AL CUADRO DE BANDEJA CON CANVAS -->
+                <div class="bandeja-seccion">
+                    <div class="bandeja-encabezado">
+                        <h3>🍽️ Arma tu Bandeja de Pedido (Arrastra varios platos)</h3>
+                        <p>Arrastra los platos de la izquierda hacia la bandeja de la derecha (o pulsa <strong>+</strong>) para combinar varios platos en un solo pedido.</p>
+                    </div>
+
+                    <div class="bandeja-layout">
+                        <!-- Lado izquierdo: Platos disponibles con sus pequeñas imágenes -->
+                        <div class="platos-laterales" aria-label="Platos disponibles para arrastrar">
+                            <h4>Platos del Menú</h4>
+                            <ul id="catalogo-bandeja" class="lista-platos-mini"></ul>
+                        </div>
+
+                        <!-- Lado derecho: Cuadro de Bandeja donde se sueltan los platos + Canvas -->
+                        <div id="cuadro-bandeja" class="cuadro-bandeja" aria-label="Bandeja donde soltar los platos">
+                            <div class="cuadro-bandeja-barra">
+                                <h4>🛎️ Tu Bandeja</h4>
+                                <button type="button" id="vaciar-bandeja" class="btn-vaciar-bandeja">🗑️ Vaciar bandeja</button>
+                            </div>
+
+                            <!-- Lienzo Canvas que dibuja la bandeja y las imágenes de los platos arrastrados -->
+                            <canvas id="canvas-bandeja" width="560" height="270">
+                                Vista en Canvas de la bandeja con los platos seleccionados.
+                            </canvas>
+                            <p class="bandeja-ayuda-canvas">💡 También puedes hacer clic sobre un plato dentro del Canvas para quitar una unidad.</p>
+
+                            <!-- Lista detallada de platos en la bandeja con controles de cantidad -->
+                            <ul id="lista-bandeja" class="lista-bandeja-items"></ul>
+
+                            <div class="resumen-bandeja">
+                                <span id="bandeja-contador">0 platos en la bandeja</span>
+                                <strong id="bandeja-subtotal">Subtotal bandeja: Bs 0.00</strong>
+                            </div>
+
+                            <!-- Gráfico en Canvas de costos por plato en la bandeja -->
+                            <canvas id="grafico-bandeja" width="560" height="170">
+                                Gráfico en Canvas del subtotal por plato en la bandeja.
+                            </canvas>
+                        </div>
+                    </div>
+                </div>
+
                 <form action="/Pedidos" method="post">
                     <fieldset>
                         <legend>Tus datos</legend>
@@ -189,21 +233,28 @@
                     <fieldset>
                         <legend>Tu pedido</legend>
                         <p>
-                            <label for="Productos">Plato principal</label>
-                            <select id="Productos" name="Productos" required>
-                                <option value="">Elige una opción</option>
-                                <option value="Sajta de Pollo" data-precio="20">Sajta de Pollo - Bs 20.00</option>
-                                <option value="Silpancho" data-precio="22">Silpancho - Bs 22.00</option>
-                                <option value="Plato Paceño" data-precio="25">Plato Paceño - Bs 25.00</option>
-                                <option value="Trucha Frita" data-precio="30">Trucha Frita - Bs 30.00</option>
-                                <option value="Porción de Alitas" data-precio="20">Porción de Alitas - Bs 20.00</option>
-                                <option value="Combo Familiar" data-precio="85">Combo Familiar - Bs 85.00</option>
-                            </select>
+                            <label for="Productos">Plato principal (o agrega platos en la bandeja de arriba)</label>
+                            <div class="fila-selector-plato">
+                                <select id="Productos" name="Productos" required>
+                                    <option value="">Elige una opción</option>
+                                    <option value="Sajta de Pollo" data-precio="20">Sajta de Pollo - Bs 20.00</option>
+                                    <option value="Silpancho" data-precio="22">Silpancho - Bs 22.00</option>
+                                    <option value="Plato Paceño" data-precio="25">Plato Paceño - Bs 25.00</option>
+                                    <option value="Trucha Frita" data-precio="30">Trucha Frita - Bs 30.00</option>
+                                    <option value="Porción de Alitas" data-precio="20">Porción de Alitas - Bs 20.00</option>
+                                    <option value="Combo Familiar" data-precio="85">Combo Familiar - Bs 85.00</option>
+                                </select>
+                                <button type="button" id="btn-agregar-select-bandeja" class="btn-tema" title="Añadir el plato elegido a la bandeja">➕ Pasar a la bandeja</button>
+                            </div>
                         </p>
 
                         <p>
                             <label for="cantidad">Cantidad</label>
                             <input type="number" id="cantidad" name="cantidad" min="1" max="100" value="1" required>
+                        </p>
+
+                        <p id="resumen-pedido-texto" class="resumen-pedido-texto">
+                            Ningún plato seleccionado todavía. Arrastra platos a la bandeja o elige uno arriba.
                         </p>
 
                         <p id="total-contenedor" style="font-size: 1.1rem; font-weight: bold; color: var(--color-principal); margin: 0.5rem 0 1rem;">
@@ -227,6 +278,34 @@
                     </fieldset>
                     <button type="submit" class="btn-enviar">Enviar pedido</button>
                 </form>
+            </section>
+
+            <section id="tablero-zona">
+                <h2>Planificar el día en cocina</h2>
+                <p>Arrastra cada plato a la columna que corresponda para organizar la producción del restaurante.</p>
+
+                <div id="tablero">
+                    <div class="columna" data-columna="hornear">
+                        <h3>🔥 Preparar hoy</h3>
+                        <ul class="lista-columna"></ul>
+                        <p class="total"></p>
+                    </div>
+                    <div class="columna" data-columna="reponer">
+                        <h3>📦 Reponer stock</h3>
+                        <ul class="lista-columna"></ul>
+                        <p class="total"></p>
+                    </div>
+                    <div class="columna" data-columna="pausa">
+                        <h3>⏸️ En pausa</h3>
+                        <ul class="lista-columna"></ul>
+                        <p class="total"></p>
+                    </div>
+                </div>
+
+                <canvas id="grafico" width="600" height="220">
+                    Gráfico de los totales por columna. Los valores están en el texto de
+                    cada columna.
+                </canvas>
             </section>
         </main>
 
@@ -254,5 +333,6 @@
         <script src="eventos.js"></script>
         <script src="app.js"></script>
         <script src="preferencias.js"></script>
+        <script src="tablero.js"></script>
     </body>
 </html>
