@@ -255,8 +255,6 @@ const bandejaContador = document.querySelector("#bandeja-contador");
 const bandejaSubtotal = document.querySelector("#bandeja-subtotal");
 const canvasBandeja = document.querySelector("#canvas-bandeja");
 const ctxBandeja = canvasBandeja ? canvasBandeja.getContext("2d") : null;
-const canvasGraficoBandeja = document.querySelector("#grafico-bandeja");
-const ctxGraficoBandeja = canvasGraficoBandeja ? canvasGraficoBandeja.getContext("2d") : null;
 
 // Estado de los platos agregados a la bandeja de pedido
 window.bandejaPedido = [];
@@ -417,7 +415,6 @@ function renderBandeja() {
   }
 
   dibujarCanvasBandeja(false);
-  dibujarGraficoBandeja();
 
   if (typeof actualizarTotalPedido === "function") {
     actualizarTotalPedido();
@@ -608,72 +605,7 @@ function dibujarCanvasBandeja(resaltadoArrastre = false) {
   ctxBandeja.restore();
 }
 
-// ── 5. GRÁFICO CANVAS DE COSTOS DE LA BANDEJA (#grafico-bandeja) ────────
-function dibujarGraficoBandeja() {
-  if (!canvasGraficoBandeja || !ctxGraficoBandeja) return;
-
-  const w = canvasGraficoBandeja.width;
-  const h = canvasGraficoBandeja.height;
-  ctxGraficoBandeja.clearRect(0, 0, w, h);
-
-  const estilo = getComputedStyle(document.body);
-  const colorBarra = estilo.getPropertyValue("--color-principal").trim() || "#d35400";
-  const colorTexto = estilo.getPropertyValue("--color-texto").trim() || "#2c3e50";
-  const colorSuave = estilo.getPropertyValue("--color-suave").trim() || "#7f8c8d";
-
-  if (window.bandejaPedido.length === 0) {
-    ctxGraficoBandeja.fillStyle = colorSuave;
-    ctxGraficoBandeja.font = "13px system-ui, sans-serif";
-    ctxGraficoBandeja.textAlign = "center";
-    ctxGraficoBandeja.fillText(
-      "Gráfico de costos por plato: agrega platos a la bandeja para visualizar.",
-      w / 2,
-      h / 2 + 4
-    );
-    return;
-  }
-
-  const subtotales = window.bandejaPedido.map(i => i.precio * i.cantidad);
-  const maxSubtotal = Math.max(...subtotales, 1);
-
-  const margenIzq = 135;
-  const margenDer = 70;
-  const margenSup = 26;
-  const anchoMaximoBarra = w - margenIzq - margenDer;
-  const n = window.bandejaPedido.length;
-  const altoFila = Math.min(24, Math.floor((h - margenSup - 12) / n));
-
-  ctxGraficoBandeja.fillStyle = colorTexto;
-  ctxGraficoBandeja.font = "bold 12px system-ui, sans-serif";
-  ctxGraficoBandeja.textAlign = "left";
-  ctxGraficoBandeja.fillText("Distribución del pedido por plato (Bs)", 14, 17);
-
-  window.bandejaPedido.forEach((item, idx) => {
-    const subtotal = item.precio * item.cantidad;
-    const y = margenSup + idx * altoFila;
-    const altoBarra = Math.max(10, altoFila - 6);
-    const anchoBarra = (subtotal / maxSubtotal) * anchoMaximoBarra;
-
-    // Etiqueta del plato a la izquierda
-    ctxGraficoBandeja.fillStyle = colorTexto;
-    ctxGraficoBandeja.font = "12px system-ui, sans-serif";
-    ctxGraficoBandeja.textAlign = "right";
-    const etiqueta = item.nombre.length > 16 ? item.nombre.slice(0, 15) + "…" : item.nombre;
-    ctxGraficoBandeja.fillText(etiqueta, margenIzq - 8, y + altoBarra - 2);
-
-    // Barra horizontal
-    ctxGraficoBandeja.fillStyle = colorBarra;
-    ctxGraficoBandeja.fillRect(margenIzq, y, anchoBarra, altoBarra);
-
-    // Monto a la derecha de la barra
-    ctxGraficoBandeja.fillStyle = colorTexto;
-    ctxGraficoBandeja.font = "bold 11px system-ui, sans-serif";
-    ctxGraficoBandeja.textAlign = "left";
-    ctxGraficoBandeja.fillText(`Bs ${subtotal.toFixed(0)}`, margenIzq + anchoBarra + 6, y + altoBarra - 2);
-  });
-}
-
-// ── 6. EVENTOS DRAG & DROP Y CLICS DE LA BANDEJA ────────────────────────
+// ── 5. EVENTOS DRAG & DROP Y CLICS DE LA BANDEJA ────────────────────────
 if (catalogoBandeja) {
   catalogoBandeja.addEventListener("dragstart", (event) => {
     const item = event.target.closest(".plato-arrastrable");
@@ -796,7 +728,6 @@ if (canvasBandeja) {
     requestAnimationFrame(() => {
       dibujarGrafico();
       dibujarCanvasBandeja(false);
-      dibujarGraficoBandeja();
     });
   });
 });
