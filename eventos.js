@@ -144,8 +144,9 @@ function actualizarTotalPedido() {
     displayTotal.textContent = `Bs ${totalBandeja.toFixed(2)}`;
 
     if (resumenPedidoTexto) {
-      const detalle = itemsBandeja.map(i => `${i.cantidad}x ${i.nombre}`).join(", ");
-      resumenPedidoTexto.textContent = `🧾 Platos en tu bandeja: ${detalle}`;
+      const totalUnidades = itemsBandeja.reduce((acc, i) => acc + i.cantidad, 0);
+      const detalle = itemsBandeja.map(i => `<strong>${i.cantidad}x</strong> ${i.nombre} (Bs ${(i.precio * i.cantidad).toFixed(2)})`).join(" · ");
+      resumenPedidoTexto.innerHTML = `🛒 <strong>Pedido de Bandeja (${totalUnidades} platos · Bs ${totalBandeja.toFixed(2)}):</strong><br>${detalle}<br><span style="font-size: 0.85rem; color: var(--color-principal); font-weight: 600;">✓ Bandeja cargada con éxito. Llena tus datos de contacto abajo para completar el envío.</span>`;
     }
     return;
   }

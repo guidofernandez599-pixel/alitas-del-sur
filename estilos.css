@@ -1,6 +1,7 @@
 /* ── 1. VARIABLES Y CONFIGURACIÓN DE TEMAS ────────────────────────────── */
 :root {
-  --color-principal: #d35400; /* Naranja Alitas / Cálido */
+  --color-principal: #d35400;
+  /* Naranja Alitas / Cálido */
   --color-secundario: #e67e22;
   --color-acento: #d35400;
   --color-fondo: #fcfcfc;
@@ -47,42 +48,153 @@ body {
   padding: 0 1rem;
 }
 
-/* ── 3. ENCABEZADO Y NAVEGACIÓN (FLEXBOX) ─────────────────────────────── */
+/* ── 3. ENCABEZADO Y NAVEGACIÓN (FLEXBOX CENTRADO) ───────────────────── */
 header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-fondo-tarjeta);
+  padding: 1.2rem 2rem 1rem;
+  border-bottom: 2px solid var(--color-borde);
+  box-shadow: var(--sombra);
+  margin-bottom: 2rem;
+  border-radius: 0 0 16px 16px;
+}
+
+/* Barra superior de preferencias (Modo oscuro, orden, ubicación, restablecer) */
+.barra-superior-preferencias {
+  width: 100%;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--color-fondo-tarjeta);
-  padding: 1rem 2rem;
-  border-bottom: 2px solid var(--color-borde);
-  box-shadow: var(--sombra);
-  margin-bottom: 2rem;
-  border-radius: 0 0 12px 12px;
+  gap: 0.8rem;
+  background: var(--color-superficie);
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--color-borde);
+  margin-bottom: 0.8rem;
 }
 
-.header-contenido {
+.prefs-grupo {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.6rem;
+  flex-wrap: wrap;
 }
 
-header img {
-  width: 60px;
-  height: 60px;
+.prefs-grupo label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0;
+  color: var(--color-texto);
+}
+
+.select-orden-header {
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--color-borde);
+  background: var(--color-fondo-tarjeta);
+  color: var(--color-texto);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.btn-ubicacion-header {
+  background: transparent;
+  color: var(--color-principal);
+  border: 1.5px solid var(--color-principal);
+  padding: 0.4rem 0.9rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.88rem;
+  transition: all 0.2s ease;
+}
+
+.btn-ubicacion-header:hover {
+  background: var(--color-principal);
+  color: #fff;
+}
+
+.btn-reset-header {
+  background: var(--color-fondo-tarjeta);
+  color: var(--color-suave);
+  border: 1px solid var(--color-borde);
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.btn-reset-header:hover {
+  background: #e74c3c;
+  color: #fff;
+  border-color: #e74c3c;
+}
+
+.estado-prefs-top {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 0.82rem;
+  color: var(--color-suave);
+  margin-bottom: 0.6rem;
+  text-align: center;
+}
+
+.estado-prefs-top #estado-ubicacion.ok {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.estado-prefs-top #estado-ubicacion.error {
+  color: #e74c3c;
+}
+
+/* Logo centrado y más grande */
+.header-contenido {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.6rem;
+  margin: 0.6rem 0 1rem;
+  width: 100%;
+}
+
+header img,
+.logo-principal {
+  width: 110px;
+  height: 110px;
   object-fit: cover;
   border-radius: 50%;
-  border: 2px solid var(--color-principal);
+  border: 3.5px solid var(--color-principal);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-header h1 {
+header img:hover,
+.logo-principal:hover {
+  transform: scale(1.04);
+  box-shadow: 0 6px 18px rgba(211, 84, 0, 0.35);
+}
+
+.header-texto h1 {
   color: var(--color-principal);
-  font-size: 1.8rem;
+  font-size: 2.1rem;
+  line-height: 1.2;
 }
 
-header p {
+.header-texto p {
   color: var(--color-suave);
-  font-size: 0.9rem;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .controles-header {
@@ -95,19 +207,28 @@ header p {
   background: var(--color-principal);
   color: #fff;
   border: none;
-  padding: 0.5rem 1rem;
+  padding: 0.45rem 1rem;
   border-radius: 20px;
   cursor: pointer;
   font-weight: 600;
-  transition: background 0.2s;
+  font-size: 0.88rem;
+  transition: background 0.2s, transform 0.15s;
 }
 
 .btn-tema:hover {
   background: var(--color-secundario);
+  transform: translateY(-1px);
+}
+
+nav {
+  width: 100%;
+  border-top: 1px solid var(--color-borde);
+  padding-top: 0.8rem;
 }
 
 nav ul {
   display: flex;
+  justify-content: center;
   list-style: none;
   gap: 1.5rem;
   flex-wrap: wrap;
@@ -182,7 +303,8 @@ h2 {
   transition: all 0.2s;
 }
 
-#filtros button.activo, #filtros button:hover {
+#filtros button.activo,
+#filtros button:hover {
   background: var(--color-principal);
   color: #fff;
   border-color: var(--color-principal);
@@ -233,7 +355,8 @@ h2 {
   margin: 0.5rem 0;
 }
 
-.tarjeta .categoria, .tarjeta .stock {
+.tarjeta .categoria,
+.tarjeta .stock {
   font-size: 0.85rem;
   color: var(--color-suave);
   margin-bottom: 0.5rem;
@@ -267,7 +390,8 @@ h2 {
   gap: 1.5rem;
 }
 
-.tarjeta-promo, .horario-card {
+.tarjeta-promo,
+.horario-card {
   background: var(--color-fondo);
   border: 1px solid var(--color-borde);
   padding: 1.5rem;
@@ -285,7 +409,8 @@ table {
   text-align: left;
 }
 
-th, td {
+th,
+td {
   padding: 0.8rem;
   border-bottom: 1px solid var(--color-borde);
 }
@@ -604,6 +729,68 @@ figcaption {
   font-size: 1.05rem;
 }
 
+/* Botón "Confirmar" de la bandeja */
+.bandeja-acciones {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.8rem;
+}
+
+.btn-confirmar-bandeja {
+  width: 100%;
+  background: linear-gradient(135deg, var(--color-principal), var(--color-secundario));
+  color: #ffffff;
+  border: none;
+  padding: 0.85rem 1.6rem;
+  border-radius: 10px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(211, 84, 0, 0.35);
+  letter-spacing: 0.5px;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-confirmar-bandeja::before {
+  content: "🛒";
+  font-size: 1.2rem;
+}
+
+.btn-confirmar-bandeja:hover {
+  background: linear-gradient(135deg, var(--color-secundario), #f39c12);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(211, 84, 0, 0.45);
+}
+
+.btn-confirmar-bandeja:active {
+  transform: translateY(1px);
+}
+
+/* Efecto de resaltado cuando la bandeja lleva al formulario */
+@keyframes pulsoFormulario {
+  0% {
+    box-shadow: 0 0 0 rgba(211, 84, 0, 0.7);
+    border-color: var(--color-principal);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(211, 84, 0, 0.45);
+    border-color: var(--color-principal);
+  }
+  100% {
+    box-shadow: var(--sombra);
+    border-color: var(--color-borde);
+  }
+}
+
+.formulario-resaltado {
+  animation: pulsoFormulario 2s ease-in-out;
+  border-color: var(--color-principal) !important;
+}
+
 .fila-selector-plato {
   display: flex;
   gap: 0.75rem;
@@ -696,6 +883,94 @@ textarea {
 
 .btn-enviar:hover {
   background: var(--color-secundario);
+}
+
+/* ── 6.1 PANEL DE PREGUNTAS FRECUENTES (FAQ) ──────────────────────────── */
+.seccion-faq {
+  margin-top: 2rem;
+  background-color: var(--color-fondo-tarjeta);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: var(--sombra);
+}
+
+.faq-subtitulo {
+  color: var(--color-suave);
+  margin-bottom: 1.5rem;
+  font-size: 0.96rem;
+}
+
+.faq-contenedor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.faq-item {
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.faq-item[open] {
+  border-color: var(--color-principal);
+  box-shadow: var(--sombra);
+}
+
+.faq-item summary {
+  padding: 1rem 1.3rem;
+  font-weight: 700;
+  font-size: 1.02rem;
+  color: var(--color-texto);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  background: var(--color-superficie);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary::after {
+  content: "➕";
+  font-size: 0.85rem;
+  color: var(--color-principal);
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+}
+
+.faq-item[open] summary {
+  background: var(--color-fondo-tarjeta);
+  color: var(--color-principal);
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.faq-item[open] summary::after {
+  content: "➖";
+}
+
+.faq-item summary:hover {
+  color: var(--color-principal);
+}
+
+.faq-respuesta {
+  padding: 1.1rem 1.3rem;
+  color: var(--color-texto);
+  font-size: 0.95rem;
+  line-height: 1.65;
+  background: var(--color-fondo);
+}
+
+.faq-respuesta strong {
+  color: var(--color-principal);
 }
 
 /* ── 7. ASIDE Y FOOTER ────────────────────────────────────────────────── */
@@ -858,7 +1133,7 @@ footer {
   margin-top: var(--espacio-lg);
 }
 
-#tablero-zona > p {
+#tablero-zona>p {
   margin-bottom: 1.2rem;
   color: var(--color-suave);
 }
@@ -989,4 +1264,86 @@ footer {
   background: var(--color-superficie);
   border: 1px solid var(--borde);
   border-radius: var(--radio);
+}
+
+h1 {
+  font-size: clamp(1.75rem, 4vw + 1rem, 3rem);
+}
+
+h2 {
+  font-size: clamp(1.35rem, 2.5vw + 0.6rem, 2rem);
+}
+
+/* ── LAS UNIDADES, Y CUÁNDO SE USA CADA UNA ──────────────────────────────
+   px    absoluta. Bordes finos, sombras. Poco más.
+   rem   relativa al tamaño de letra RAÍZ. Tipografía y espaciado: respeta
+         la configuración de accesibilidad del usuario.
+   em    relativa al tamaño de letra DEL PROPIO ELEMENTO. Ojo: al anidar
+         COMPONE, y un 1.2em dentro de otro 1.2em da 1.44.
+   %     relativa al contenedor. Anchos.
+   vw/vh relativas a la ventana. Útiles, pero nunca solas para texto.
+   ch    el ancho del carácter "0". Ideal para limitar líneas de texto.       */
+
+/* ── PREFERENCIAS DEL USUARIO ────────────────────────────────────────────
+   Una media query no solo pregunta por el ancho. También puede preguntar por
+   lo que la persona configuró en su sistema, y eso es accesibilidad real.   */
+
+/* Hay gente a la que el movimiento le provoca mareo. Esto no es un extra:
+   para esas personas, una animación es un problema físico. */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* (Es de los poquísimos casos en que !important está justificado: se está
+   anulando a propósito TODO lo demás, por una razón de accesibilidad.) */
+
+/* Respetar el tema del sistema, si el usuario no eligió uno a mano.
+   El Día 13 guardamos la elección; esto es el valor por defecto de quien
+   todavía no eligió. */
+
+
+/* ── LA SINTAXIS MODERNA DE RANGOS ───────────────────────────────────────
+   Las dos formas hacen lo mismo. La de abajo es más legible, sobre todo con
+   rangos cerrados:
+
+       @media (min-width: 48rem) { }
+       @media (width >= 48rem) { }
+
+       @media (min-width: 48rem) and (max-width: 64rem) { }
+       @media (48rem <= width <= 64rem) { }
+
+   Soporte: Chrome, Firefox y Safari modernos. Para producción conviene
+   comprobarlo; para este curso está bien.                                   */
+@media (width >=48rem) {
+  .controles {
+    gap: var(--espacio-lg);
+  }
+}
+
+/* ── IMÁGENES ────────────────────────────────────────────────────────────
+   La regla de siempre, desde el Día 3, más object-fit.
+
+   object-fit decide qué hace una imagen cuando el hueco que le toca tiene
+   otra proporción:
+     cover     la recorta para llenar el hueco. No deforma.
+     contain   la encoge para que entre entera. Deja franjas.
+     fill      la estira. Deforma. Casi nunca es lo que se quiere.           */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.tarjeta img {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  /* reserva el espacio antes de que cargue */
+  object-fit: cover;
 }

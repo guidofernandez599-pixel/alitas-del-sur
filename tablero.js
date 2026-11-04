@@ -251,6 +251,7 @@ const catalogoBandeja = document.querySelector("#catalogo-bandeja");
 const cuadroBandeja = document.querySelector("#cuadro-bandeja");
 const listaBandeja = document.querySelector("#lista-bandeja");
 const btnVaciarBandeja = document.querySelector("#vaciar-bandeja");
+const btnConfirmarBandeja = document.querySelector("#btn-confirmar-bandeja");
 const bandejaContador = document.querySelector("#bandeja-contador");
 const bandejaSubtotal = document.querySelector("#bandeja-subtotal");
 const canvasBandeja = document.querySelector("#canvas-bandeja");
@@ -699,6 +700,32 @@ if (listaBandeja) {
 
 if (btnVaciarBandeja) {
   btnVaciarBandeja.addEventListener("click", vaciarBandeja);
+}
+
+// Botón "Confirmar" que valida la bandeja y lleva directo al formulario
+if (btnConfirmarBandeja) {
+  btnConfirmarBandeja.addEventListener("click", () => {
+    if (!window.bandejaPedido || window.bandejaPedido.length === 0) {
+      alert("⚠️ Tu bandeja está vacía.\nArrastra al menos un plato a la bandeja (o presiona +) para armar tu pedido antes de confirmar.");
+      return;
+    }
+
+    if (typeof actualizarTotalPedido === "function") {
+      actualizarTotalPedido();
+    }
+
+    const formPedido = document.querySelector("#formulario-pedido") || document.querySelector("form");
+    if (formPedido) {
+      formPedido.scrollIntoView({ behavior: "smooth", block: "start" });
+      formPedido.classList.add("formulario-resaltado");
+      setTimeout(() => formPedido.classList.remove("formulario-resaltado"), 2000);
+
+      const campoNombre = formPedido.querySelector("#nombre");
+      if (campoNombre) {
+        setTimeout(() => campoNombre.focus(), 650);
+      }
+    }
+  });
 }
 
 // Clic directo sobre un plato dibujado en el Canvas de la bandeja para restar 1 unidad
